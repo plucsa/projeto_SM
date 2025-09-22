@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Visualizador AR com Zoom</title>
+  <title>Visualizador AR</title>
 
   <!-- A-Frame (versão mais recente) -->
   <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
@@ -18,46 +18,11 @@
       width: 100%;
       height: 100%;
       overflow: hidden;
-      font-family: sans-serif;
-    }
-
-    #zoom-controls {
-      position: absolute;
-      bottom: 20px;
-      right: 20px;
-      z-index: 10;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-
-    .zoom-button {
-      width: 50px;
-      height: 50px;
-      font-size: 28px;
-      font-weight: bold;
-      text-align: center;
-      border: none;
-      border-radius: 50%;
-      background-color: rgba(0, 0, 0, 0.5);
-      color: white;
-      cursor: pointer;
-      transition: background-color 0.2s;
-    }
-
-    .zoom-button:hover {
-      background-color: rgba(0, 0, 0, 0.7);
     }
   </style>
 </head>
 
 <body vr-mode-ui="enabled: false">
-
-  <!-- Controles de Zoom -->
-  <div id="zoom-controls">
-    <button id="zoom-in" class="zoom-button">+</button>
-    <button id="zoom-out" class="zoom-button">-</button>
-  </div>
 
   <!-- Cena A-Frame AR -->
   <a-scene
@@ -67,10 +32,14 @@
 
     <!-- Marcador Hiro -->
     <a-marker preset="hiro">
+      <!-- 
+        Entidade do modelo 3D com uma escala fixa e pequena.
+        Se o tamanho ainda não estiver correto, podemos ajustar o valor de "scale".
+      -->
       <a-entity
         id="model-entity"
         gltf-model="url(modelo_3d.glb)"
-        scale="0.01 0.01 0.01" <!-- Escala inicial bem pequena -->
+        scale="0.001 0.001 0.001" <!-- Escala fixa e muito pequena -->
         position="0 0.5 0"
         rotation="0 0 0"
         animation-mixer
@@ -82,33 +51,5 @@
     <a-entity camera></a-entity>
 
   </a-scene>
-
-  <script>
-    // Espera o conteúdo da página carregar
-    window.addEventListener('load', () => {
-      const model = document.getElementById('model-entity');
-      const zoomInButton = document.getElementById('zoom-in');
-      const zoomOutButton = document.getElementById('zoom-out');
-
-      // Define os parâmetros do zoom
-      const scaleIncrement = 0.001; // Aumenta/diminui a escala neste valor
-      const maxScale = 0.1;       // Escala máxima
-      const minScale = 0.001;     // Escala mínima
-
-      // Função para mudar a escala
-      const adjustScale = (factor) => {
-        const currentScale = model.getAttribute('scale').x;
-        let newScale = currentScale + factor;
-        // Garante que a nova escala não ultrapasse os limites
-        newScale = Math.max(minScale, Math.min(maxScale, newScale));
-        model.setAttribute('scale', { x: newScale, y: newScale, z: newScale });
-      };
-
-      // Adiciona os eventos de clique aos botões
-      zoomInButton.addEventListener('click', () => adjustScale(scaleIncrement));
-      zoomOutButton.addEventListener('click', () => adjustScale(-scaleIncrement));
-    });
-  </script>
-
 </body>
 </html>
