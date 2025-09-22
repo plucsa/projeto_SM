@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AR.js - Visualizador de Modelo 3D</title>
+
+  <!-- A-Frame: O framework principal para WebXR -->
+  <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
+  
+  <!-- AR.js para A-Frame: A mágica da Realidade Aumentada -->
+  <script src="https://cdn.jsdelivr.net/gh/AR-js-org/AR.js@3.4.0/aframe/build/aframe-ar.js"></script>
+
+  <style>
+    body, html {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    }
+  </style>
+</head>
+<body vr-mode-ui="enabled: false">
+
+  <!-- 
+    Cena A-Frame com AR.js
+    - `vr-mode-ui="enabled: false"`: Esconde o botão de entrar em modo VR.
+    - `loading-screen`: Mostra uma tela de carregamento enquanto os recursos são baixados.
+    - `arjs`: Configurações do AR.js.
+      - `sourceType: webcam`: Usa a câmera do dispositivo.
+      - `debugUIEnabled: false`: Esconde a janela de debug.
+      - `detectionMode`: O tipo de marcador a ser detectado.
+  -->
+  <a-scene
+    vr-mode-ui="enabled: false"
+    loading-screen="dotsColor: white; backgroundColor: black"
+    arjs="sourceType: webcam; debugUIEnabled: true; detectionMode: mono_and_matrix; matrixCodeType: 3x3;"
+  >
+
+    <!-- 
+      O marcador que acionará a exibição do modelo.
+      - `preset="hiro"`: Usa o marcador padrão "Hiro".
+    -->
+    <a-marker preset="hiro">
+      <!-- 
+        A entidade 3D que será exibida.
+        - `gltf-model`: Carrega o modelo 3D.
+        - `scale`: Define o tamanho fixo do modelo. Ajuste este valor se necessário.
+        - `position`: Centraliza o modelo no marcador.
+      -->
+      <a-entity
+        id="model-entity"
+        gltf-model="url(PL-VERSAO1.gltf)"
+        scale="0.05 0.05 0.05"
+        position="0 0.5 0"
+        rotation="0 0 0"
+        animation-mixer
+      >
+      </a-entity>
+    </a-marker>
+
+    <!-- 
+      Câmera da cena.
+      AR.js cria e gerencia a câmera automaticamente, então não precisamos de uma tag explícita aqui.
+    -->
+    <a-entity camera></a-entity>
+  </a-scene>
+
+</body>
+</html>
