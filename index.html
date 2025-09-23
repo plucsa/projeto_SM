@@ -1,66 +1,92 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="pt-BR">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no, shrink-to-fit=no">
-  <title>AR.js — Hiro Marker + GLB</title>
-  <!-- A-Frame -->
-  <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
-  <!-- AR.js for A-Frame -->
-  <script src="https://cdn.jsdelivr.net/gh/AR-js-org/AR.js/aframe/build/aframe-ar.js"></script>
-  <style>
-    body, html { margin: 0; padding: 0; height: 100%; overflow: hidden; }
-    #instructions {
-      position: absolute; left: 8px; top: 8px; z-index: 2; background: rgba(0,0,0,0.35); color: white; padding: 8px 10px; border-radius: 6px; font-family: sans-serif; font-size: 13px;
-    }
-  </style>
-</head>
-<body>
-  <div id="instructions">Aponte a câmera para o <strong>Hiro marker</strong> (impressão/print do padrão) — substitua <code>models/model.glb</code> pelo seu arquivo .glb/.gltf.</div>
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, user-scalable=no, shrink-to-fit=no"
+    />
+    <title>AR.js — Hiro Marker + GLB</title>
+    <!-- A-Frame -->
+    <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
+    <!-- AR.js for A-Frame -->
+    <script src="https://cdn.jsdelivr.net/gh/AR-js-org/AR.js/aframe/build/aframe-ar.js"></script>
+    <style>
+      body,
+      html {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        overflow: hidden;
+      }
+      #instructions {
+        position: absolute;
+        left: 8px;
+        top: 8px;
+        z-index: 2;
+        background: rgba(0, 0, 0, 0.35);
+        color: white;
+        padding: 8px 10px;
+        border-radius: 6px;
+        font-family: sans-serif;
+        font-size: 13px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="instructions">
+      Aponte a câmera para o <strong>Hiro marker</strong> (impressão/print do
+      padrão) — substitua <code>models/model.glb</code> pelo seu arquivo
+      .glb/.gltf.
+    </div>
 
-  <!-- A-Frame scene com AR.js ativado -->
-  <a-scene
-    vr-mode-ui="enabled: false"
-    embedded
-    arjs="sourceType: webcam; debugUIEnabled: true;">
-
-    <!-- Carregue seu modelo aqui (troque a URL) -->
-    <a-assets>
-      <!-- troque o src abaixo para o caminho do seu modelo .glb (pode ser URL absoluta). 
+    <!-- A-Frame scene com AR.js ativado -->
+    <a-scene
+      vr-mode-ui="enabled: false"
+      embedded
+      arjs="sourceType: webcam; debugUIEnabled: true;"
+    >
+      <!-- Carregue seu modelo aqui (troque a URL) -->
+      <a-assets>
+        <!-- troque o src abaixo para o caminho do seu modelo .glb (pode ser URL absoluta). 
            Se for um arquivo local, sirva o projeto por um servidor (npm serve, python -m http.server, etc.). -->
-      <a-asset-item id="meu-modelo" src="modelo_3d.glb"></a-asset-item>
-    </a-assets>
+        <a-asset-item id="meu-modelo" src="modelo_3d.glb"></a-asset-item>
+      </a-assets>
 
-    <!-- Marker preset hiro: tudo que for filho desse marker aparece quando o marker for detectado -->
-    <a-marker preset="hiro">
+      <!-- Marker preset hiro: tudo que for filho desse marker aparece quando o marker for detectado -->
+      <a-marker preset="hiro">
+        <!-- Exemplo de entidade que carrega o modelo 3D -->
+        <!-- Ajuste position / rotation / scale conforme necessário -->
+        <a-entity
+          id="modelo-3d"
+          gltf-model="#meu-modelo"
+          position="0 0 0"
+          rotation="0 0 0"
+          scale="0.5 0.5 0.5"
+          animation-mixer
+          material="opacity: 1; transparent: false"
+        >
+        </a-entity>
 
-      <!-- Exemplo de entidade que carrega o modelo 3D -->
-      <!-- Ajuste position / rotation / scale conforme necessário -->
-      <a-entity
-        id="modelo-3d"
-        gltf-model="#meu-modelo"
-        position="0 0 0"
-        rotation="0 0 0"
-        scale="0.5 0.5 0.5"
-        animation-mixer>
-      </a-entity>
+        <!-- Sombra simples (opcional) -->
+        <a-plane
+          rotation="-90 0 0"
+          width="2"
+          height="2"
+          position="0 0 0"
+          material="color: #111; opacity: 0.25"
+        ></a-plane>
+      </a-marker>
 
-      <!-- Sombra simples (opcional) -->
-      <a-plane rotation="-90 0 0" width="2" height="2" position="0 0 0" material="color: #111; opacity: 0.25"></a-plane>
+      <!-- câmera A-Frame padrão (AR.js controla a câmera) -->
+      <a-entity camera></a-entity>
+    </a-scene>
 
-    </a-marker>
-
-    <!-- câmera A-Frame padrão (AR.js controla a câmera) -->
-    <a-entity camera></a-entity>
-
-  </a-scene>
-
-  <!-- DICAS IMPORTANTES:
+    <!-- DICAS IMPORTANTES:
        1) Substitua models/model.glb pela URL do seu arquivo .glb/.gltf.
        2) O modelo precisa estar disponível com CORS habilitado se for hospedado em outro domínio.
        3) Para acessar a câmera no mobile normalmente é necessário servir a página via HTTPS ou usar localhost.
        4) Se o modelo aparecer muito grande/pequeno, ajuste o atributo "scale".
        5) Se quiser que o modelo fique em cima do marcador (não no centro), ajuste "position" (ex.: "0 0.05 0").
-  -->
-</body>
+  --></body>
 </html>
