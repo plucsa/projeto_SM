@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
   <title>Visualizador AR</title>
 
   <!-- A-Frame -->
@@ -19,31 +19,6 @@
       height: 100%;
       overflow: hidden;
       background: black;
-    }
-
-    /* Botões de controle de zoom */
-    .controls {
-      position: fixed;
-      bottom: 20px;
-      left: 50%;
-      transform: translateX(-50%);
-      display: flex;
-      gap: 15px;
-      z-index: 10;
-    }
-
-    .controls button {
-      padding: 12px 20px;
-      font-size: 20px;
-      border: none;
-      border-radius: 10px;
-      background: rgba(255,255,255,0.8);
-      cursor: pointer;
-      transition: 0.2s;
-    }
-
-    .controls button:hover {
-      background: white;
     }
   </style>
 </head>
@@ -74,27 +49,45 @@
 
   </a-scene>
 
-  <!-- Controles de zoom -->
-  <div class="controls">
-    <button id="zoomIn">+</button>
-    <button id="zoomOut">-</button>
-  </div>
-
   <script>
     const cameraEl = document.getElementById("camera");
-    let fov = 100; // valor inicial do campo de visão
+    let fov = 100; // valor inicial
+    let initialDistance = null;
 
-    document.getElementById("zoomIn").addEventListener("click", () => {
-      if (fov > 30) { // limite mínimo (mais "próximo")
-        fov -= 5;
-        cameraEl.setAttribute("camera", "fov", fov);
+    function distance(touches) {
+      const dx = touches[0].clientX - touches[1].clientX;
+      const dy = touches[0].clientY - touches[1].clientY;
+      return Math.sqrt(dx * dx + dy * dy);
+    }
+
+    document.addEventListener("touchstart", (e) => {
+      if (e.touches.length === 2) {
+        initialDistance = distance(e.touches);
       }
     });
 
-    document.getElementById("zoomOut").addEventListener("click", () => {
-      if (fov < 150) { // limite máximo (mais "afastado")
-        fov += 5;
-        cameraEl.setAttribute("camera", "fov", fov);
+    document.addEventListener("touchmove", (e) => {
+      if (e.touches.length === 2 && initialDistance) {
+        const newDistance = distance(e.touches);
+        const delta = newDistance - initialDistance;
+
+        if (Math.abs(delta) > 10) { // evitar ruído
+          if (delta > 0 && fov > 30) { 
+            // gesto de afastar → zoom in
+            fov -= 2;
+          } else if (delta < 0 && fov < 150) { 
+            // gesto de pinça → zoom out
+            fov += 2;
+          }
+          cameraEl.setAttribute("camera", "fov", fov);
+          initialDistance = newDistance;
+        }
+      }
+    });
+
+    document.addEventListener("touchend", (e) => {
+      if (e.touches.length < 2) {
+        initialDistance = null;
       }
     });
   </script>
