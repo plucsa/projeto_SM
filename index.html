@@ -42,17 +42,21 @@
 
     <!-- A-Frame scene com AR.js ativado -->
     <a-scene
-      embedded
       vr-mode-ui="enabled: false"
-      arjs="
-    trackingMethod: best;
-    sourceType: webcam;
-    debugUIEnabled: false;
-    trackingBackend: artoolkit;
-    markersAreaEnabled: false;"
+      embedded
+      arjs="sourceType: webcam; debugUIEnabled: true;"
     >
-      <!-- Marker Hiro -->
+      <!-- Carregue seu modelo aqui (troque a URL) -->
+      <a-assets>
+        <!-- troque o src abaixo para o caminho do seu modelo .glb (pode ser URL absoluta). 
+           Se for um arquivo local, sirva o projeto por um servidor (npm serve, python -m http.server, etc.). -->
+        <a-asset-item id="meu-modelo" src="modelo_3d.glb"></a-asset-item>
+      </a-assets>
+
+      <!-- Marker preset hiro: tudo que for filho desse marker aparece quando o marker for detectado -->
       <a-marker preset="hiro">
+        <!-- Exemplo de entidade que carrega o modelo 3D -->
+        <!-- Ajuste position / rotation / scale conforme necessário -->
         <a-entity
           id="modelo-3d"
           gltf-model="#meu-modelo"
@@ -60,11 +64,21 @@
           rotation="0 0 0"
           scale="0.5 0.5 0.5"
           animation-mixer
-          material="opacity:1; transparent:false"
+          material="opacity: 1; transparent: false"
         >
         </a-entity>
+
+        <!-- Sombra simples (opcional) -->
+        <a-plane
+          rotation="-90 0 0"
+          width="2"
+          height="2"
+          position="0 0 0"
+          material="color: #111; opacity: 0.25"
+        ></a-plane>
       </a-marker>
 
+      <!-- câmera A-Frame padrão (AR.js controla a câmera) -->
       <a-entity camera></a-entity>
     </a-scene>
 
