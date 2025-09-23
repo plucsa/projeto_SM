@@ -2,90 +2,65 @@
 <html lang="pt-BR">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
-  <title>Visualizador AR</title>
-
+  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no, shrink-to-fit=no">
+  <title>AR.js — Hiro Marker + GLB</title>
   <!-- A-Frame -->
-  <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
-  
-  <!-- AR.js -->
-  <script src="https://cdn.jsdelivr.net/gh/AR-js-org/AR.js@3.4.0/aframe/build/aframe-ar.js"></script>
-
+  <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
+  <!-- AR.js for A-Frame -->
+  <script src="https://cdn.jsdelivr.net/gh/AR-js-org/AR.js/aframe/build/aframe-ar.js"></script>
   <style>
-    body, html {
-      margin: 0;
-      padding: 0;
-      width: 100%;
-      height: 100%;
-      overflow: hidden;
-      background: black;
+    body, html { margin: 0; padding: 0; height: 100%; overflow: hidden; }
+    #instructions {
+      position: absolute; left: 8px; top: 8px; z-index: 2; background: rgba(0,0,0,0.35); color: white; padding: 8px 10px; border-radius: 6px; font-family: sans-serif; font-size: 13px;
     }
   </style>
 </head>
-
 <body>
-  <!-- Cena A-Frame AR -->
+  <div id="instructions">Aponte a câmera para o <strong>Hiro marker</strong> (impressão/print do padrão) — substitua <code>models/model.glb</code> pelo seu arquivo .glb/.gltf.</div>
+
+  <!-- A-Frame scene com AR.js ativado -->
   <a-scene
     vr-mode-ui="enabled: false"
     embedded
-    renderer="logarithmicDepthBuffer: true;"
-    arjs="sourceType: webcam; facingMode: environment; debugUIEnabled: false;"
-  >
-    <!-- Marcador Hiro -->
+    arjs="trackingMethod: best; sourceType: webcam; debugUIEnabled: false;">
+
+    <!-- Carregue seu modelo aqui (troque a URL) -->
+    <a-assets>
+      <!-- troque o src abaixo para o caminho do seu modelo .glb (pode ser URL absoluta). 
+           Se for um arquivo local, sirva o projeto por um servidor (npm serve, python -m http.server, etc.). -->
+      <a-asset-item id="meu-modelo" src="models/model.glb"></a-asset-item>
+    </a-assets>
+
+    <!-- Marker preset hiro: tudo que for filho desse marker aparece quando o marker for detectado -->
     <a-marker preset="hiro">
+
+      <!-- Exemplo de entidade que carrega o modelo 3D -->
+      <!-- Ajuste position / rotation / scale conforme necessário -->
       <a-entity
-        id="model-entity"
-        gltf-model="url(modelo_3d.glb)"
-        scale="0.001 0.001 0.001"
-        position="0 0.5 0"
+        id="modelo-3d"
+        gltf-model="modelo_3d.glb"
+        position="0 0 0"
         rotation="0 0 0"
-        animation-mixer
-      ></a-entity>
+        scale="0.5 0.5 0.5"
+        animation-mixer>
+      </a-entity>
+
+      <!-- Sombra simples (opcional) -->
+      <a-plane rotation="-90 0 0" width="2" height="2" position="0 0 0" material="color: #111; opacity: 0.25"></a-plane>
+
     </a-marker>
 
-    <!-- Câmera com fov inicial -->
-    <a-entity id="camera" camera="fov: 100"></a-entity>
+    <!-- câmera A-Frame padrão (AR.js controla a câmera) -->
+    <a-entity camera></a-entity>
+
   </a-scene>
 
-  <script>
-    const cameraEl = document.getElementById("camera");
-    let fov = 100;
-    let initialDistance = null;
-
-    function distance(touches) {
-      const dx = touches[0].clientX - touches[1].clientX;
-      const dy = touches[0].clientY - touches[1].clientY;
-      return Math.sqrt(dx * dx + dy * dy);
-    }
-
-    document.addEventListener("touchstart", (e) => {
-      if (e.touches.length === 2) {
-        initialDistance = distance(e.touches);
-      }
-    });
-
-    document.addEventListener("touchmove", (e) => {
-      if (e.touches.length === 2 && initialDistance) {
-        const newDistance = distance(e.touches);
-        const delta = newDistance - initialDistance;
-
-        if (Math.abs(delta) > 10) {
-          if (delta > 0 && fov > 30) {
-            fov -= 2; // zoom in
-          } else if (delta < 0 && fov < 150) {
-            fov += 2; // zoom out
-          }
-          cameraEl.setAttribute("camera", "fov", fov);
-          initialDistance = newDistance;
-        }
-      }
-    });
-
-    document.addEventListener("touchend", (e) => {
-      if (e.touches.length < 2) {
-        initialDistance = null;
-      }
-    });
-  </script>
+  <!-- DICAS IMPORTANTES:
+       1) Substitua models/model.glb pela URL do seu arquivo .glb/.gltf.
+       2) O modelo precisa estar disponível com CORS habilitado se for hospedado em outro domínio.
+       3) Para acessar a câmera no mobile normalmente é necessário servir a página via HTTPS ou usar localhost.
+       4) Se o modelo aparecer muito grande/pequeno, ajuste o atributo "scale".
+       5) Se quiser que o modelo fique em cima do marcador (não no centro), ajuste "position" (ex.: "0 0.05 0").
+  -->
 </body>
 </html>
