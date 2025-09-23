@@ -28,7 +28,7 @@
     <a-assets>
       <!-- troque o src abaixo para o caminho do seu modelo .glb (pode ser URL absoluta). 
            Se for um arquivo local, sirva o projeto por um servidor (npm serve, python -m http.server, etc.). -->
-      <a-asset-item id="meu-modelo" src="models/model.glb"></a-asset-item>
+      <a-asset-item id="meu-modelo" src="modelo_3d.glb"></a-asset-item>
     </a-assets>
 
     <!-- Marker preset hiro: tudo que for filho desse marker aparece quando o marker for detectado -->
@@ -38,7 +38,7 @@
       <!-- Ajuste position / rotation / scale conforme necessário -->
       <a-entity
         id="modelo-3d"
-        gltf-model="modelo_3d.glb"
+        gltf-model="#meu-modelo"
         position="0 0 0"
         rotation="0 0 0"
         scale="0.5 0.5 0.5"
