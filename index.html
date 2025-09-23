@@ -23,14 +23,14 @@
   </style>
 </head>
 
-<body vr-mode-ui="enabled: false">
-
+<body>
   <!-- Cena A-Frame AR -->
   <a-scene
+    vr-mode-ui="enabled: false"
     embedded
-    arjs="sourceType: webcam; debugUIEnabled: false;"
+    renderer="logarithmicDepthBuffer: true;"
+    arjs="sourceType: webcam; facingMode: environment; debugUIEnabled: false;"
   >
-
     <!-- Marcador Hiro -->
     <a-marker preset="hiro">
       <a-entity
@@ -40,18 +40,16 @@
         position="0 0.5 0"
         rotation="0 0 0"
         animation-mixer
-      >
-      </a-entity>
+      ></a-entity>
     </a-marker>
 
     <!-- Câmera com fov inicial -->
     <a-entity id="camera" camera="fov: 100"></a-entity>
-
   </a-scene>
 
   <script>
     const cameraEl = document.getElementById("camera");
-    let fov = 100; // valor inicial
+    let fov = 100;
     let initialDistance = null;
 
     function distance(touches) {
@@ -71,13 +69,11 @@
         const newDistance = distance(e.touches);
         const delta = newDistance - initialDistance;
 
-        if (Math.abs(delta) > 10) { // evitar ruído
-          if (delta > 0 && fov > 30) { 
-            // gesto de afastar → zoom in
-            fov -= 2;
-          } else if (delta < 0 && fov < 150) { 
-            // gesto de pinça → zoom out
-            fov += 2;
+        if (Math.abs(delta) > 10) {
+          if (delta > 0 && fov > 30) {
+            fov -= 2; // zoom in
+          } else if (delta < 0 && fov < 150) {
+            fov += 2; // zoom out
           }
           cameraEl.setAttribute("camera", "fov", fov);
           initialDistance = newDistance;
@@ -91,6 +87,5 @@
       }
     });
   </script>
-
 </body>
 </html>
